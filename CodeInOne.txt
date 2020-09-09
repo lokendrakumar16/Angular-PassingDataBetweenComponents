@@ -1,0 +1,101 @@
+******************************************************** Parent to Child via Input ****************************
+parent.html
+<app-child [message]="parentValue"></app-child>
+
+parent.ts
+parentValue: string = "Hello from parent!!";
+
+child.ts
+import { Component, OnInit, Input} from "@angular/core";
+@Input() message: string;
+
+child.html
+{{ message }}
+
+*************************************** Child to Parent via Output and EventEmitter ****************************
+child.html
+<input type="text" [(ngModel)]="txtChild" />
+<input type="button" (click)="sendMessage()" value="Send Message" />
+
+child.ts
+import { Component, OnInit, Output, EventEmitter } from "@angular/core";
+
+@Output() messageEvent = new EventEmitter<string>();
+txtChild: any;
+
+sendMessage() {
+  this.messageEvent.emit(this.txtChild);
+}
+  
+parent.html
+  <app-child (messageEvent)="receiveMessage($event)"></app-child>
+  {{messageFromChild}}
+
+parent.ts
+receiveMessage($event) {
+   this.messageFromChild = $event;
+}
+
+**************************************************** Child to Parent via ViewChild ****************************
+parent.ts
+import { Component, OnInit, ViewChild, AfterViewInit } from "@angular/core";
+import { ChildComponent } from "../child/child.component";
+
+export class ParentComponent implements AfterViewInit {
+  @ViewChild(ChildComponent, { static: false }) child;
+  viewChildMesssage: string;
+
+  constructor() {}
+
+  ngAfterViewInit() {
+    this.viewChildMesssage = this.child.viewChildMessage;
+  }
+}
+
+parent.html
+{{viewChildMesssage}}
+
+**************************************** Any Component to Any Component via Service ****************************
+DataService.ts
+import { Injectable } from "@angular/core";
+import { BehaviorSubject } from "rxjs";
+
+@Injectable({
+  providedIn: "root",
+})
+export class DataService {
+  private messageSource = new BehaviorSubject<string>("default message");
+  currentMessage = this.messageSource.asObservable();
+
+  constructor() {}
+
+  changeMessage(message: string) {
+    this.messageSource.next(message);
+  }
+}
+
+component1.ts
+import { DataService } from "../services/data.service";
+
+  constructor(private _service: DataService) {}
+  
+    ngOnInit() {
+    this._service.currentMessage.subscribe((msg) => {
+      this.mesageViaService = msg;
+    });
+  }
+component1.html
+{{mesageViaService}}
+
+  
+component2.ts
+import { DataService } from "../services/data.service";
+
+constructor(private _service: DataService) {}
+
+  ChangeValueOfService() {
+    this._service.changeMessage("Hello from child to service..");
+  }
+  
+component2.html
+<input type="button" (click)="ChangeValueOfService()" value="Call Service Method"/>
