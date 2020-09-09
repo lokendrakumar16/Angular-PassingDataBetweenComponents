@@ -1,0 +1,16 @@
+<br />
+{{ message }}
+<br />
+
+<br />
+<input type="text" [(ngModel)]="txtChild" />
+<input type="button" (click)="sendMessage()" value="Send Message" />
+
+<input
+  type="button"
+  (click)="ChangeValueOfService()"
+  value="Call Service Method"
+/>
+
+<br />
+Message from service: {{ messageFromService }}

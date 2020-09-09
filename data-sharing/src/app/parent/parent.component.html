@@ -1,0 +1,38 @@
+<div
+  style="
+    width: 500px;
+    float: left;
+    height: 300px;
+    background: powderblue;
+    margin: 10px;
+  "
+>
+  Parent Component
+  <br />
+  <br />
+
+  Message from Child: {{ messageFromChild }}
+
+  <br />
+
+  {{ viewChildMesssage }}
+
+  <br />
+  Message from Service: {{ mesageViaService }}
+</div>
+<div
+  style="
+    width: 500px;
+    float: left;
+    height: 300px;
+    background: lightblue;
+    margin: 10px;
+  "
+>
+  Child Component
+  <br />
+  <app-child
+    [message]="parentValue"
+    (messageEvent)="receiveMessage($event)"
+  ></app-child>
+</div>
